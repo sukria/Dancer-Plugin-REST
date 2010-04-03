@@ -16,14 +16,37 @@ sub {
 
     before sub {
         my $format = params->{'format'};
-        set serializer $serializers->{$format}
-            if $format && $serializers->{$format};
+        return unless defined $format;
+
+        my $serializer = $serializers->{$format};
+        return unless defined $serializer;
+
+        set serializer => $serializer;
     };
 };
 
 register resource =>
 sub {
-    die "TODO";
+    my ($resource, %triggers) = @_;
+
+    die "resource should be given with triggers"
+        unless defined $resource and 
+            defined $triggers{get} and
+            defined $triggers{update} and 
+            defined $triggers{delete} and 
+            defined $triggers{create};
+
+    get "/${resource}/:id" => $triggers{get};
+    get "/${resource}/:id.:format" => $triggers{get};
+
+    put "/${resource}/:id" => $triggers{update};
+    put "/${resource}/:id.:format" => $triggers{update};
+
+    post "/${resource}" => $triggers{create};
+    post "/${resource}.:format" => $triggers{create};
+
+    del "/${resource}/:id" => $triggers{delete};
+    del "/${resource}/:id.:format" => $triggers{delete};
 };
 
 register_plugin;
