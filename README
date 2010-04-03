@@ -1,0 +1,5 @@
+Dancer::Plugin::REST
+
+A Dancer plugin to transform your Dancer app in a RESTful 
+webservice.
+
