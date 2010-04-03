@@ -1,0 +1,6 @@
+
+Version 0.1
+	* Support for prepare_serializer_for_format keyword
+	  autoamtically set a serializer according to params->{format}
+	* Support for resource definition
+	  When a resource is defined a set of routes are defined in a RESTful manner.
