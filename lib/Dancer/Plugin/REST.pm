@@ -1,18 +1,24 @@
 package Dancer::Plugin::REST;
 use Dancer ':syntax';
 use Dancer::Plugin;
+use Dancer::Config qw/plugin_setting/;
 
 our $AUTHORITY = 'SUKRIA';
 our $VERSION = '0.1';
 
 register prepare_serializer_for_format =>
 sub {
-    my $serializers = {
-        'json' => 'JSON',
-        'yml'  => 'YAML',
-        'xml'  => 'XML',
-        'dump' => 'Dumper',
-    };
+    my $conf        = plugin_setting;
+    my $serializers = (
+        ( $conf && exists $conf->{serializers} )
+        ? $conf->{serializers}
+        : {
+            'json' => 'JSON',
+            'yml'  => 'YAML',
+            'xml'  => 'XML',
+            'dump' => 'Dumper',
+        }
+    );
 
     before sub {
         my $format = params->{'format'};
@@ -30,10 +36,10 @@ sub {
     my ($resource, %triggers) = @_;
 
     die "resource should be given with triggers"
-        unless defined $resource and 
+        unless defined $resource and
             defined $triggers{get} and
-            defined $triggers{update} and 
-            defined $triggers{delete} and 
+            defined $triggers{update} and
+            defined $triggers{delete} and
             defined $triggers{create};
 
     get "/${resource}/:id" => $triggers{get};
@@ -68,13 +74,13 @@ Dancer::Plugin::REST - A plugin for writing RESTful apps with Dancer
 
     prepare_serializer_for_format;
 
-    get '/user/:id.:format' => sub { 
-        User->find(params->{id});   
+    get '/user/:id.:format' => sub {
+        User->find(params->{id});
     };
 
     # curl http://mywebservice/user/42.json
     { "id": 42, "name": "John Foo", email: "jhon.foo@example.com"}
-    
+
     # curl http://mywebservice/user/42.yml
     --
     id: 42
@@ -102,7 +108,7 @@ handlers, without taking care of the outgoing data format.
 
 This keyword lets you declare a resource your application will handle.
 
-    resource user => 
+    resource user =>
         get    => sub { # return user where id = params->{id}   },
         create => sub { # create a new user with params->{user} },
         delete => sub { # delete user where id = params->{id}   },
