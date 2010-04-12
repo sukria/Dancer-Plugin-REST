@@ -1,4 +1,3 @@
-MANIFEST
 CHANGES
 lib/Dancer/Plugin/REST.pm
 Makefile.PL
