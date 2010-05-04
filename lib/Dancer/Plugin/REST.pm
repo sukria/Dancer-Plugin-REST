@@ -1,7 +1,6 @@
 package Dancer::Plugin::REST;
 use Dancer ':syntax';
 use Dancer::Plugin;
-use Dancer::Config qw/plugin_setting/;
 
 our $AUTHORITY = 'SUKRIA';
 our $VERSION = '0.1';
