@@ -22,9 +22,13 @@ sub {
     before sub {
         my $format = params->{'format'};
         return unless defined $format;
-
+        
         my $serializer = $serializers->{$format};
-        return unless defined $serializer;
+        unless (defined $serializer) {
+            return halt(Dancer::Error->new(
+                code => 404,
+                message => "unsupported format requested: ".$format));
+        }
 
         set serializer => $serializer;
     };
