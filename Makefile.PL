@@ -17,7 +17,8 @@ WriteMakefile1(
     },
 
     PREREQ_PM => {
-        'Dancer' => '1.180',
+        'Dancer' => '1.178_01',
+        'JSON'   => 0,
     },
 
     test => {TESTS => join( ' ', (glob( 't/*.t'), glob('t/*/*.t')))},
