@@ -3,4 +3,5 @@ t/logs
 *.old
 Makefile
 MANIFEST.bak
+cover_db
 blib
