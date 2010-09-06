@@ -58,6 +58,35 @@ sub {
     del "/${resource}/:id" => $triggers{delete};
 };
 
+register send_entity => sub {
+    my ($entity, $http_code) = @_;
+
+    $http_code ||= 200;
+
+    status($http_code);
+    $entity;
+};
+
+register status_ok => sub {
+    send_entity($_[0]);
+};
+
+register status_created => sub {
+    send_entity($_[0], 201);
+};
+
+register status_accepted => sub {
+    send_entity($_[0], 202);
+};
+
+register status_bad_request => sub {
+    send_entity({error => $_[0]}, 400);
+};
+
+register status_not_found => sub {
+    send_entity({error => $_[0]}, 404);
+};
+
 register_plugin;
 
 1;
@@ -126,6 +155,40 @@ This keyword lets you declare a resource your application will handle.
     # DELETE /user/:id.:format
     # PUT /user/:id
     # PUT /user/:id.:format
+
+=head2 helpers
+
+Some helpers are available. This helper will set an appropriate HTTP status for you.
+
+=head3 status_ok
+
+    status_ok({users => {...}});
+
+Set the HTTP status to 200
+
+=head3 status_created
+
+    status_created({users => {...}});
+
+Set the HTTP status to 201
+
+=head3 status_accepted
+
+    status_accepted({users => {...}});
+
+Set the HTTP status to 202
+
+=head3 status_bad_request
+
+    status_bad_request("user foo can't be found");
+
+Set the HTTP status to 400. This function as for argument a scalar that will be used under the key B<error>.
+
+=head3 status_not_found
+
+    status_not_found("users doesn't exists");
+
+Set the HTTP status to 404. This function as for argument a scalar that will be used under the key B<error>.
 
 =head1 LICENCE
 
