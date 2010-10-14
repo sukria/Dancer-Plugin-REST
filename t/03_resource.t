@@ -3,12 +3,13 @@ use warnings;
 use Dancer::ModuleLoader;
 use Test::More import => ['!pass'];
 
-plan tests => 7;
+plan tests => 8;
 
 {
     package Webservice;
     use Dancer;
     use Dancer::Plugin::REST;
+    use Test::More import => ['!pass'];
 
     resource user => 
         'get' => \&on_get_user,
@@ -48,6 +49,10 @@ plan tests => 7;
         $users->{$id} = { %$user, %{params('body')} };
         { user => $users->{$id} };
     }
+
+    eval { resource failure => get => sub { 'GET' } };
+    like $@, qr{resource should be given with triggers}, 
+        "resource must have 4 hooks";
 }
 
 use lib 't';
