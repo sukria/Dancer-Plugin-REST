@@ -1,5 +1,7 @@
+Version 0.02
+	* 100% coverage
 
-Version 0.1
+Version 0.0001_01
 	* Support for prepare_serializer_for_format keyword
 	  autoamtically set a serializer according to params->{format}
 	* Support for resource definition

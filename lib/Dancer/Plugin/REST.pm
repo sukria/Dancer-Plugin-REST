@@ -3,7 +3,7 @@ use Dancer ':syntax';
 use Dancer::Plugin;
 
 our $AUTHORITY = 'SUKRIA';
-our $VERSION = '0.0001_01';
+our $VERSION = '0.02';
 
 register prepare_serializer_for_format =>
 sub {

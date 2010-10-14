@@ -1,4 +1,5 @@
 t\/logs\/.*log
+cover_db
 \.git
 blib
 pm_to_blib
