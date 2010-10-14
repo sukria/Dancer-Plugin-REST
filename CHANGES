@@ -1,5 +1,6 @@
 Version 0.02
 	* 100% coverage
+	* fix a bug in 'resource' (order of route hander definition)
 
 Version 0.0001_01
 	* Support for prepare_serializer_for_format keyword
