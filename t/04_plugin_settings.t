@@ -17,6 +17,15 @@ my $yaml = YAML::Dump($data);
     use Dancer;
     use Dancer::Plugin::REST;
 
+    setting plugins => {
+        REST => {
+            serializers => {
+                'yaml' => 'YAML',
+                'json' => 'NotExists',
+            }
+        }
+    };
+
     prepare_serializer_for_format;
 
     get '/' => sub { "root" };
@@ -31,34 +40,39 @@ use TestUtils;
 my @tests = (
     {
         request => [GET => '/'],
-        content_type => 'text/html',
         response => 'root',
     },
     { 
         request => [GET => '/foo.json'],
-        content_type => 'application/json',
-        response => $json
+        response => qr/Error 500.*Unable to process your query/ms
     },
     { 
-        request => [GET => '/foo.yml'],
-        content_type => 'text/x-yaml',
+        request => [GET => '/foo.yaml'],
         response => $yaml,
+    },
+    { 
+        request => [GET => '/foo.foobar'],
+        response => qr/unsupported format requested: foobar/ms,
     },
     {
         request => [GET => '/'],
-        content_type => 'text/html',
         response => 'root',
     },
 );
 
-plan tests => scalar(@tests) * 2;
+plan tests => scalar(@tests);
 
 for my $test ( @tests ) {
     my $response = get_response_for_request(@{$test->{request}});
-    is_deeply( $response->{headers}, 
-        [ 'Content-Type' => $test->{content_type}],
-        "headers have content_type set to ".$test->{content_type});
-
-    is( $response->{content}, $test->{response},
-        "\$data has been encoded" );
+    if (ref($test->{response})) {
+        like( $response->{content}, $test->{response},
+            "response looks good for '@{$test->{request}}'" );
+    }
+    else {
+        is( $response->{content}, $test->{response},
+            "response looks good for '@{$test->{request}}'" );
+    }
 }
+
+
+
