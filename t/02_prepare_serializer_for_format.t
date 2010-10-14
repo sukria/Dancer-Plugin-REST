@@ -5,10 +5,12 @@ use Test::More import => ['!pass'];
 
 plan skip_all => "JSON is needed for this test"
     unless Dancer::ModuleLoader->load('JSON');
-plan tests => 3;
+plan skip_all => "YAML is needed for this test"
+    unless Dancer::ModuleLoader->load('YAML');
 
 my $data = { foo => 42 };
 my $json = JSON::encode_json($data);
+my $yaml = YAML::Dump($data);
 
 {
     package Webservice;
@@ -17,7 +19,8 @@ my $json = JSON::encode_json($data);
 
     prepare_serializer_for_format;
 
-    get '/foo.:format' => sub {
+    get '/' => sub { "root" };
+    get '/:something.:format' => sub {
         $data;
     };
 }
@@ -25,11 +28,39 @@ my $json = JSON::encode_json($data);
 use lib 't';
 use TestUtils;
 
-my $response = get_response_for_request(GET => '/foo.json');
-ok(defined($response), "response found for /foo.json");
+my @tests = (
+    {
+        request => [GET => '/'],
+        content_type => 'text/html',
+        response => 'root',
+    },
+    { 
+        request => [GET => '/foo.json'],
+        content_type => 'application/json',
+        response => $json
+    },
+    { 
+        request => [GET => '/foo.yml'],
+        content_type => 'text/x-yaml',
+        response => $yaml,
+    },
+    {
+        request => [GET => '/'],
+        content_type => 'text/html',
+        response => 'root',
+    },
+);
 
-is_deeply( $response->{headers}, [ 'Content-Type' => 'application/json'],
-    "headers have content_type set to application/json" );
+plan tests => scalar(@tests) * 2;
 
-is( $response->{content}, $json,
-    "\$data has been encoded to JSON");
+for my $test ( @tests ) {
+    my $response = get_response_for_request(@{$test->{request}});
+    is_deeply( $response->{headers}, 
+        [ 'Content-Type' => $test->{content_type}],
+        "headers have content_type set to ".$test->{content_type});
+
+    is( $response->{content}, $test->{response},
+        "\$data has been encoded" );
+}
+
+
