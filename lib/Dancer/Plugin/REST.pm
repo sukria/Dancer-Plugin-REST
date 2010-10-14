@@ -45,17 +45,17 @@ sub {
             defined $triggers{delete} and
             defined $triggers{create};
 
-    get "/${resource}/:id" => $triggers{get};
     get "/${resource}/:id.:format" => $triggers{get};
+    get "/${resource}/:id" => $triggers{get};
 
-    put "/${resource}/:id" => $triggers{update};
     put "/${resource}/:id.:format" => $triggers{update};
+    put "/${resource}/:id" => $triggers{update};
 
-    post "/${resource}" => $triggers{create};
     post "/${resource}.:format" => $triggers{create};
+    post "/${resource}" => $triggers{create};
 
-    del "/${resource}/:id" => $triggers{delete};
     del "/${resource}/:id.:format" => $triggers{delete};
+    del "/${resource}/:id" => $triggers{delete};
 };
 
 register_plugin;
