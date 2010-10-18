@@ -3,7 +3,7 @@ use Dancer ':syntax';
 use Dancer::Plugin;
 
 our $AUTHORITY = 'SUKRIA';
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 register prepare_serializer_for_format =>
 sub {
@@ -196,7 +196,8 @@ This module is released under the same terms as Perl itself.
 
 =head1 AUTHORS
 
-This module has been written by Alexis Sukrieh <sukria@sukria.net>.
+This module has been written by Alexis Sukrieh C<< <sukria@sukria.net> >> and Franck
+Cuny.
 
 =head1 SEE ALSO
 

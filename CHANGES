@@ -1,3 +1,8 @@
+Version 0.003
+    [ Franck Cuny ]
+    * New keywords for ReST response status 
+	  (status_ok, status_created, ...)
+
 Version 0.02
 	* 100% coverage
 	* fix a bug in 'resource' (order of route hander definition)
