@@ -55,9 +55,9 @@ plan tests => scalar(@tests) * 2;
 
 for my $test ( @tests ) {
     my $response = get_response_for_request(@{$test->{request}});
-    is_deeply( $response->{headers}, 
-        [ 'Content-Type' => $test->{content_type}],
-        "headers have content_type set to ".$test->{content_type});
+    is($response->header('Content-Type'), 
+       $test->{content_type},
+       "headers have content_type set to ".$test->{content_type});
 
     is( $response->{content}, $test->{response},
         "\$data has been encoded" );
