@@ -1,18 +1,20 @@
 package Dancer::Plugin::REST;
+use strict;
+use warnings;
+
+use Carp 'croak';
 use Dancer ':syntax';
 use Dancer::Plugin;
 
 our $AUTHORITY = 'SUKRIA';
-our $VERSION = '0.03';
+our $VERSION   = '0.03';
 
-register prepare_serializer_for_format =>
-sub {
+register prepare_serializer_for_format => sub {
     my $conf        = plugin_setting;
     my $serializers = (
-        ( $conf && exists $conf->{serializers} )
+        ($conf && exists $conf->{serializers})
         ? $conf->{serializers}
-        : {
-            'json' => 'JSON',
+        : { 'json' => 'JSON',
             'yml'  => 'YAML',
             'xml'  => 'XML',
             'dump' => 'Dumper',
@@ -22,40 +24,42 @@ sub {
     before sub {
         my $format = params->{'format'};
         return unless defined $format;
-        
+
         my $serializer = $serializers->{$format};
         unless (defined $serializer) {
-            return halt(Dancer::Error->new(
-                code => 404,
-                message => "unsupported format requested: ".$format));
+            return halt(
+                Dancer::Error->new(
+                    code    => 404,
+                    message => "unsupported format requested: " . $format
+                )
+            );
         }
 
         set serializer => $serializer;
     };
 };
 
-register resource =>
-sub {
+register resource => sub {
     my ($resource, %triggers) = @_;
 
-    die "resource should be given with triggers"
-        unless defined $resource and
-            defined $triggers{get} and
-            defined $triggers{update} and
-            defined $triggers{delete} and
-            defined $triggers{create};
+    croak "resource should be given with triggers"
+      unless defined $resource
+          and defined $triggers{get}
+          and defined $triggers{update}
+          and defined $triggers{delete}
+          and defined $triggers{create};
 
     get "/${resource}/:id.:format" => $triggers{get};
-    get "/${resource}/:id" => $triggers{get};
+    get "/${resource}/:id"         => $triggers{get};
 
     put "/${resource}/:id.:format" => $triggers{update};
-    put "/${resource}/:id" => $triggers{update};
+    put "/${resource}/:id"         => $triggers{update};
 
     post "/${resource}.:format" => $triggers{create};
-    post "/${resource}" => $triggers{create};
+    post "/${resource}"         => $triggers{create};
 
     del "/${resource}/:id.:format" => $triggers{delete};
-    del "/${resource}/:id" => $triggers{delete};
+    del "/${resource}/:id"         => $triggers{delete};
 };
 
 register send_entity => sub {
@@ -67,30 +71,92 @@ register send_entity => sub {
     $entity;
 };
 
-register status_ok => sub {
-    send_entity($_[0]);
-};
+my %http_codes = (
 
-register status_created => sub {
-    send_entity($_[0], 201);
-};
+    # 1xx
+    100 => 'Continue',
+    101 => 'Switching Protocols',
+    102 => 'Processing',
 
-register status_accepted => sub {
-    send_entity($_[0], 202);
-};
+    # 2xx
+    200 => 'OK',
+    201 => 'Created',
+    202 => 'Accepted',
+    203 => 'Non-Authoritative Information',
+    204 => 'No Content',
+    205 => 'Reset Content',
+    206 => 'Partial Content',
+    207 => 'Multi-Status',
+    210 => 'Content Different',
 
-register status_bad_request => sub {
-    send_entity({error => $_[0]}, 400);
-};
+    # 3xx
+    300 => 'Multiple Choices',
+    301 => 'Moved Permanently',
+    302 => 'Found',
+    303 => 'See Other',
+    304 => 'Not Modified',
+    305 => 'Use Proxy',
+    307 => 'Temporary Redirect',
+    310 => 'Too many Redirect',
 
-register status_not_found => sub {
-    send_entity({error => $_[0]}, 404);
-};
+    # 4xx
+    400 => 'Bad Request',
+    401 => 'Unauthorized',
+    402 => 'Payment Required',
+    403 => 'Forbidden',
+    404 => 'Not Found',
+    405 => 'Method Not Allowed',
+    406 => 'Not Acceptable',
+    407 => 'Proxy Authentication Required',
+    408 => 'Request Time-out',
+    409 => 'Conflict',
+    410 => 'Gone',
+    411 => 'Length Required',
+    412 => 'Precondition Failed',
+    413 => 'Request Entity Too Large',
+    414 => 'Request-URI Too Long',
+    415 => 'Unsupported Media Type',
+    416 => 'Requested range unsatisfiable',
+    417 => 'Expectation failed',
+    418 => 'Teapot',
+    422 => 'Unprocessable entity',
+    423 => 'Locked',
+    424 => 'Method failure',
+    425 => 'Unordered Collection',
+    426 => 'Upgrade Required',
+    449 => 'Retry With',
+    450 => 'Parental Controls',
+
+    # 5xx
+    500 => 'Internal Server Error',
+    501 => 'Not Implemented',
+    502 => 'Bad Gateway',
+    503 => 'Service Unavailable',
+    504 => 'Gateway Time-out',
+    505 => 'HTTP Version not supported',
+    507 => 'Insufficient storage',
+    509 => 'Bandwidth Limit Exceeded',
+);
+
+for my $code (keys %http_codes) {
+    my $helper_name = lc($http_codes{$code});
+    $helper_name =~ s/[^\w]+/_/gms;
+    $helper_name = "status_${helper_name}";
+
+    register $helper_name => sub {
+        if ($code >= 400) {
+            send_entity({error => $_[0]}, $code);
+        }
+        else {
+            send_entity($_[0], $code);
+        }
+    };
+}
 
 register_plugin;
-
 1;
 __END__
+
 =pod
 
 =head1 NAME
