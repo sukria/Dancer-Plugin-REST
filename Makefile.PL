@@ -17,7 +17,7 @@ WriteMakefile1(
     },
 
     PREREQ_PM => {
-        'Dancer' => '1.178_01',
+        'Dancer' => '1.1999_02',
         'JSON'   => 0,
     },
 
