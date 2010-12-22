@@ -7,7 +7,7 @@ use Dancer ':syntax';
 use Dancer::Plugin;
 
 our $AUTHORITY = 'SUKRIA';
-our $VERSION   = '0.03';
+our $VERSION   = '0.04';
 
 register prepare_serializer_for_format => sub {
     my $conf        = plugin_setting;
