@@ -44,7 +44,7 @@ my @tests = (
     },
     { 
         request => [GET => '/foo.json'],
-        response => qr/Error 500.*Unable to process your query/ms
+        response => qr/An internal error occured/ms
     },
     { 
         request => [GET => '/foo.yaml'],
