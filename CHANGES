@@ -1,4 +1,8 @@
-Version 0.003
+Version 0.04
+	[ Alexis Sukrieh ]
+	* Add all HTTP response status
+
+Version 0.03
     [ Franck Cuny ]
     * New keywords for ReST response status 
 	  (status_ok, status_created, ...)
