@@ -177,13 +177,13 @@ Dancer::Plugin::REST - A plugin for writing RESTful apps with Dancer
     };
 
     # curl http://mywebservice/user/42.json
-    { "id": 42, "name": "John Foo", email: "jhon.foo@example.com"}
+    { "id": 42, "name": "John Foo", email: "john.foo@example.com"}
 
     # curl http://mywebservice/user/42.yml
     --
     id: 42
     name: "John Foo"
-    email: "jhon.foo@example.com"
+    email: "john.foo@example.com"
 
 =head1 DESCRIPTION
 
@@ -193,14 +193,14 @@ This plugin helps you write a RESTful webservice with Dancer.
 
 =head2 prepare_serializer_for_format
 
-When this pragam is used a before filter is set by the plugin to automatically
+When this pragma is used, a before filter is set by the plugin to automatically
 change the serializer when a format is detected in the URI.
 
 That means that each route you define with a B<:format> token will trigger a
-serializer defintion, if the format is known.
+serializer definition, if the format is known.
 
-This lets you define all the REST action you like aas regular Dancer route
-handlers, without taking care of the outgoing data format.
+This lets you define all the REST actions you like as regular Dancer route
+handlers, without explicitly handling the outgoing data format.
 
 =head2 resource
 
