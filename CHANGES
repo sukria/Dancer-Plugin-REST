@@ -1,3 +1,9 @@
+0.05    2011-03-04
+
+    [ BUG FIXES ]
+    * Fix the test suite with dancer_response
+    * Fix dependencies: Dancer 1.3014
+
 Version 0.04
 	[ Alexis Sukrieh ]
 	* Add all HTTP response status
