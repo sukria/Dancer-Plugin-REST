@@ -6,17 +6,17 @@ use Test::More import => ['!pass'];
 plan tests => 16;
 
 {
+
     package Webservice;
     use Dancer;
     use Dancer::Plugin::REST;
 
-    resource user => 
-        'get' => \&on_get_user,
-        'create' => \&on_create_user,
-        'delete' => \&on_delete_user,
-        'update' => \&on_update_user;
+    resource user => 'get' => \&on_get_user,
+      'create'    => \&on_create_user,
+      'delete'    => \&on_delete_user,
+      'update'    => \&on_update_user;
 
-    my $users = {};
+    my $users   = {};
     my $last_id = 0;
 
     sub on_get_user {
@@ -35,10 +35,10 @@ plan tests => 16;
     }
 
     sub on_delete_user {
-        my $id = params->{'id'};
+        my $id      = params->{'id'};
         my $deleted = $users->{$id};
         delete $users->{$id};
-        status_accepted({ user => $deleted });
+        status_accepted( { user => $deleted } );
     }
 
     sub on_update_user {
@@ -52,46 +52,59 @@ plan tests => 16;
 
 }
 
-use lib 't';
-use TestUtils;
+use Dancer::Test;
 
-my $r = get_response_for_request(GET => '/user/1');
+my $r = dancer_response( GET => '/user/1' );
 is $r->{status}, 400, 'HTTP code is 400';
 is $r->{content}->{error}, 'id is missing', 'Valid content';
 
-$r = get_response_for_request(POST => '/user', { name => 'Alexis' });
+$r = dancer_response( POST => '/user', { body => { name => 'Alexis' } } );
 is $r->{status}, 201, 'HTTP code is 201';
 is_deeply $r->{content}, { user => { id => 1, name => "Alexis" } },
-    "create user works";
+  "create user works";
 
-$r = get_response_for_request(GET => '/user/1');
+$r = dancer_response( GET => '/user/1' );
 is $r->{status}, 200, 'HTTP code is 200';
-is_deeply $r->{content}, {user => { id => 1, name => 'Alexis'}},
-    "user 1 is defined";
+is_deeply $r->{content}, { user => { id => 1, name => 'Alexis' } },
+  "user 1 is defined";
 
-$r = get_response_for_request(PUT => '/user/1', { nick => 'sukria', name =>
-'Alexis Sukrieh' });
+$r = dancer_response(
+    PUT => '/user/1',
+    {   body => {
+            nick => 'sukria',
+            name => 'Alexis Sukrieh'
+        }
+    }
+);
 is $r->{status}, 202, 'HTTP code is 202';
-is_deeply $r->{content}, {user => { id => 1, name => 'Alexis Sukrieh', nick => 'sukria'}},
-    "user 1 is updated";
+is_deeply $r->{content},
+  { user => { id => 1, name => 'Alexis Sukrieh', nick => 'sukria' } },
+  "user 1 is updated";
 
-$r = get_response_for_request(PUT => '/user/23', { nick => 'john doe', name =>
-'John Doe' });
+$r = dancer_response(
+    PUT => '/user/23',
+    {   body => {
+            nick => 'john doe',
+            name => 'John Doe'
+        }
+    }
+);
 is $r->{status}, 404, 'HTTP code is 404';
 is_deeply $r->{content}->{error}, 'user undef', 'valid content';
 
-$r = get_response_for_request(DELETE => '/user/1');
-is_deeply $r->{content}, {user => { id => 1, name => 'Alexis Sukrieh', nick => 'sukria'}},
-    "user 1 is deleted";
+$r = dancer_response( DELETE => '/user/1' );
+is_deeply $r->{content},
+  { user => { id => 1, name => 'Alexis Sukrieh', nick => 'sukria' } },
+  "user 1 is deleted";
 is $r->{status}, 202, 'HTTP code is 202';
 
 
-$r = get_response_for_request(GET => '/user/1');
+$r = dancer_response( GET => '/user/1' );
 is $r->{status}, 400, 'HTTP code is 400';
 is_deeply $r->{content}->{error}, 'id is missing', 'valid response';
 
-$r = get_response_for_request(POST => '/user', { name => 'Franck Cuny' });
+$r = dancer_response( POST => '/user', { body => { name => 'Franck Cuny' } } );
 is_deeply $r->{content}, { user => { id => 2, name => "Franck Cuny" } },
-    "id is correctly increased";
+  "id is correctly increased";
 is $r->{status}, 201, 'HTTP code is 201';
 
