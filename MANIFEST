@@ -7,4 +7,3 @@ t/01_base.t
 t/02_prepare_serializer_for_format.t
 t/03_resource.t
 t/04_plugin_settings.t
-t/TestUtils.pm
