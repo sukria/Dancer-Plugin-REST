@@ -34,8 +34,7 @@ my $yaml = YAML::Dump($data);
     };
 }
 
-use lib 't';
-use TestUtils;
+use Dancer::Test;
 
 my @tests = (
     {
@@ -63,7 +62,7 @@ my @tests = (
 plan tests => scalar(@tests);
 
 for my $test ( @tests ) {
-    my $response = get_response_for_request(@{$test->{request}});
+    my $response = dancer_response(@{$test->{request}});
     if (ref($test->{response})) {
         like( $response->{content}, $test->{response},
             "response looks good for '@{$test->{request}}'" );

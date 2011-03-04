@@ -55,35 +55,42 @@ plan tests => 8;
         "resource must have 4 hooks";
 }
 
-use lib 't';
-use TestUtils;
+use Dancer::Test;
 
-my $r = get_response_for_request(GET => '/user/1');
+my $r = dancer_response(GET => '/user/1');
 is_deeply $r->{content}, {user => undef},
     "user 1 is not defined";
 
-$r = get_response_for_request(POST => '/user', { name => 'Alexis' });
+$r = dancer_response(POST => '/user', { body => {name => 'Alexis' }});
 is_deeply $r->{content}, { user => { id => 1, name => "Alexis" } },
     "create user works";
 
-$r = get_response_for_request(GET => '/user/1');
+$r = dancer_response(GET => '/user/1');
 is_deeply $r->{content}, {user => { id => 1, name => 'Alexis'}},
     "user 1 is defined";
 
-$r = get_response_for_request(PUT => '/user/1', { nick => 'sukria', name =>
-'Alexis Sukrieh' });
+$r = dancer_response(PUT => '/user/1', { 
+    body => {
+        nick => 'sukria', 
+        name => 'Alexis Sukrieh' 
+    }
+});
 is_deeply $r->{content}, {user => { id => 1, name => 'Alexis Sukrieh', nick => 'sukria'}},
     "user 1 is updated";
 
-$r = get_response_for_request(DELETE => '/user/1');
+$r = dancer_response(DELETE => '/user/1');
 is_deeply $r->{content}, {user => { id => 1, name => 'Alexis Sukrieh', nick => 'sukria'}},
     "user 1 is deleted";
 
-$r = get_response_for_request(GET => '/user/1');
+$r = dancer_response(GET => '/user/1');
 is_deeply $r->{content}, {user => undef},
     "user 1 is not defined";
 
-$r = get_response_for_request(POST => '/user', { name => 'Franck Cuny' });
+$r = dancer_response(POST => '/user', { 
+    body => {
+        name => 'Franck Cuny' 
+    }
+});
 is_deeply $r->{content}, { user => { id => 2, name => "Franck Cuny" } },
     "id is correctly increased";
 
