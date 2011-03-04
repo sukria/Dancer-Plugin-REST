@@ -8,6 +8,7 @@ plan skip_all => "JSON is needed for this test"
 plan skip_all => "YAML is needed for this test"
     unless Dancer::ModuleLoader->load('YAML');
 
+
 my $data = { foo => 42 };
 my $json = JSON::encode_json($data);
 my $yaml = YAML::Dump($data);
@@ -17,6 +18,8 @@ my $yaml = YAML::Dump($data);
     use Dancer;
     use Dancer::Plugin::REST;
 
+    setting environment => 'testing';
+
     prepare_serializer_for_format;
 
     get '/' => sub { "root" };
@@ -24,9 +27,7 @@ my $yaml = YAML::Dump($data);
         $data;
     };
 }
-
-use lib 't';
-use TestUtils;
+use Dancer::Test;
 
 my @tests = (
     {
@@ -54,7 +55,7 @@ my @tests = (
 plan tests => scalar(@tests) * 2;
 
 for my $test ( @tests ) {
-    my $response = get_response_for_request(@{$test->{request}});
+    my $response = dancer_response(@{ $test->{request} });
     is($response->header('Content-Type'), 
        $test->{content_type},
        "headers have content_type set to ".$test->{content_type});
