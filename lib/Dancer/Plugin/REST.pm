@@ -9,6 +9,12 @@ use Dancer::Plugin;
 our $AUTHORITY = 'SUKRIA';
 our $VERSION   = '0.04';
 
+my $content_types = {
+    json => 'application/json',
+    yml  => 'text/x-yaml',
+    xml  => 'application/xml',
+};
+
 register prepare_serializer_for_format => sub {
     my $conf        = plugin_setting;
     my $serializers = (
@@ -36,6 +42,8 @@ register prepare_serializer_for_format => sub {
         }
 
         set serializer => $serializer;
+        my $ct = $content_types->{$format} || setting('content_type');
+        content_type $ct;
     };
 };
 
