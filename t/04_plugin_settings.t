@@ -17,15 +17,7 @@ my $yaml = YAML::Dump($data);
     use Dancer;
     use Dancer::Plugin::REST;
 
-    setting plugins => {
-        REST => {
-            serializers => {
-                'yaml' => 'YAML',
-                'json' => 'NotExists',
-            }
-        }
-    };
-
+    set environment => 'test';
     prepare_serializer_for_format;
 
     get '/' => sub { "root" };
@@ -43,10 +35,10 @@ my @tests = (
     },
     { 
         request => [GET => '/foo.json'],
-        response => qr/An internal error occured/ms
+        response => $json,
     },
     { 
-        request => [GET => '/foo.yaml'],
+        request => [GET => '/foo.yml'],
         response => $yaml,
     },
     { 
