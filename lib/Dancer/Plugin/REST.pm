@@ -7,7 +7,7 @@ use Dancer ':syntax';
 use Dancer::Plugin;
 
 our $AUTHORITY = 'SUKRIA';
-our $VERSION   = '0.05';
+our $VERSION   = '0.06';
 
 my $content_types = {
     json => 'application/json',
