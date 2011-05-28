@@ -1,3 +1,9 @@
+0.06	2011-05-28
+
+	[ TEST SUITE ]
+	* Skip test t/03_resource.t if Dancer is not >= 1.3059_01
+	  A bug in Dancer::Test in previous versions prevent the test from passing.
+
 0.05    2011-03-04
 
     [ BUG FIXES ]
