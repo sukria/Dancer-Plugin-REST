@@ -1,3 +1,9 @@
+0.07    2011-11-01
+
+    * Minor updates to fix warnings with Dancer 1.3080
+    * Fix POD
+    (Alexis Sukrieh)
+
 0.06	2011-05-28
 
 	[ TEST SUITE ]
