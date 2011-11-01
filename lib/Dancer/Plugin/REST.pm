@@ -7,7 +7,7 @@ use Dancer ':syntax';
 use Dancer::Plugin;
 
 our $AUTHORITY = 'SUKRIA';
-our $VERSION   = '0.06';
+our $VERSION   = '0.07';
 
 my $content_types = {
     json => 'application/json',
@@ -27,7 +27,7 @@ register prepare_serializer_for_format => sub {
         }
     );
 
-    before sub {
+    hook 'before' => sub {
         my $format = params->{'format'};
         return unless defined $format;
 
@@ -223,8 +223,8 @@ This keyword lets you declare a resource your application will handle.
     # this defines the following routes:
     # GET /user/:id
     # GET /user/:id.:format
-    # POST /user/create
-    # POST /user/create.:format
+    # POST /user
+    # POST /user.:format
     # DELETE /user/:id
     # DELETE /user/:id.:format
     # PUT /user/:id
